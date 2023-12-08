@@ -1,13 +1,9 @@
 ---
-title: "Resources"
-author: ''
-date: "2023-12-08"
-slug: resources
-categories: R
-tags: []
+date: "2016-05-05T21:48:51-07:00"
+title: Resources
 ---
 
-#### R
+## R
 
 [Beginning Computer Science in R](https://homerhanumat.github.io/r-notes/)
 
@@ -21,13 +17,13 @@ tags: []
 
 [Efficient R Programming](https://csgillespie.github.io/efficientR/index.html)
 
-#### Package Development
+## Package Development
 
 [R Packages (2e)](https://r-pkgs.org/)
 
 [Writing R Extensions](https://cran.r-project.org/doc/manuals/R-exts.html)
 
-#### Shiny
+## Shiny
 
 [Mastering Shiny](https://mastering-shiny.org/)
 
