@@ -1,6 +1,6 @@
 ---
 date: "2016-05-05T21:48:51-07:00"
-title: About
+title: About Me
 ---
 
-This is a "hello world" example website for the [**blogdown**](https://github.com/rstudio/blogdown) package. The theme was forked from [@jrutheiser/hugo-lithium-theme](https://github.com/jrutheiser/hugo-lithium-theme) and modified by [Yihui Xie](https://github.com/yihui/hugo-lithium).
+My name is Sara Biddle. I graduated with a Bachelor's of Science in Applied Mathematics and Health Science from Furman University in 2022. I have been working as a Research Coordinator in the Cancer Institute at Prisma Health in Greenville, South Carolina since June of 2022. 
