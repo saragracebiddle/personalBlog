@@ -1,0 +1,155 @@
+---
+title: Data Analysis as an R Package
+author: ''
+date: '2023-12-08'
+slug: dat-anls-as-pkg
+categories: ["R"]
+tags: []
+---
+
+Large data analysis projects can quickly reach a "cliff of complexity", where you have multiple long R script files that are hard to read or comprehend what work you have done.
+
+For a large project, I like to take advantage of the `devtools` and `usethis` packages when possible, which lead me to the development of a workflow using package development tools for data analysis. 
+
+But you like working with R script files, and package development sounds scary and for software engineers, not a data analyst like yourself. So why would you want to change things up?
+
+#### R packages have rules about file management within the package.
+
+When creating files for your data analysis flow, I'm sure you have come across recommendations such as putting the script to load data in one file, another file for data cleaning, a data analysis file, and a file for any functions you write for the project. There are many different recommendations for exactly how to name these files and where to put them within the overall directory of the project. Packages already have conventions about file locations and names. 
+
+Raw data files go in the `data-raw` subdirectory. Cleaned data goes in the `data` subdirectory. Functions and other R code go in the `R` subdirectory. Tests for the code and functions go in the `testthat` subdirectory. The `man` subdirectory contains documentation of the functions and datasets in your package.
+
+Conventions like this allow you to look at anyone's package and be able to find components you are interested in inspecting. Without consistent conventions, reading through someone else's project can be frustrating since you have no idea where to find anything. 
+
+So, now you're going to follow the conventions of package organization and file naming. This helps others (and future you) find *where* you put everything. What about *how you used it?*
+
+
+#### R Packages Document Data and Functions.
+
+I am definitely guilty of writing code without enough comments for myself, and when I look back at it later I can't understand what exactly the code was doing or how it worked and I have to spend even more time re-learning what I already did. Put in the work to document your code early on in the project and prevent this from happening, because it is super frustrating and time consuming.
+
+You are already familiar with function documentation. You look at that every time you read a help page about a function you are trying to use. It looks something like this:
+
+\\TODO insert image of a help page
+
+There are many tools to use for documentation, but let's assume you have chosen one and used it.
+
+Now others and future you can see the details of the data and code in your package. Great! You don't have to dig through your comments to figure out how you made it happen. But now you're trying to use this code and it's not working like you think it should. Did you test it the first time around?
+
+#### Testing your code keeps it from causing problems later.
+
+You probably already test your code, but you may not realize it since you aren't putting your tests together in one place. Have you written a function and then used it a few times to make sure it works right but not saved those few uses in your script because it's not really part of what the script is trying to accomplish? Say, you write a quick function to split some strings apart and get a certain piece out. You use it a few times in the console with strings that definitely should work to make sure it does what you intend. Then you continue with your work. That's testing your code, just not formally.
+
+Did you just put strings that *should* work, but now you're using it with something a little different and it's not working the way it should? Write a formal test for the new use case that isn't working and fix your original code. Then when it passes the old tests for strings that should work and the new test for a string that you want it to work with, you know for sure that your code works for both uses. If you didn't save the first tests somewhere, you can't check your code after you tweak it for a new use case. 
+
+In a more data analysis-centric example, say you wrote a function that is supposed to take the answers to a survey and score them according to some rules. You make sure it works with a few of the answer sets you have and continue on. Later, you change the function that scores them slightly, for whatever reason. Trying to be more time/memory efficient, whatever. You need to be sure that the new function and old function score the answers the same. Otherwise, you'll be in a heap of trouble trying to figure out exactly how and for which answers the new function and old function give different scores for. This is where testing can help you! You write a few tests for the original function and save them in a file. Later, when you change the function, you can run the original tests to make sure it gives you the same answers. This prevents you getting in a whole heap of trouble when you accidentally screw up the new version of the function. You run the tests before you actually use it to score surveys, preventing you from having to go back and re-run them when you find the error you made. And yes, I said when you screw up, because you inevitably will. 
+
+You can organize, document, and test without using `devtools` or other package development tools. So why convert to a package development workflow?
+
+#### Data and functions are available without loading them into your environment.
+
+R is well known for eating up your RAM. When you use a package development workflow, you can access your data and functions without loading them into your global environment. This can greatly reduce the amount of 'stuff' in your environment and keep your workflow cleaner. In fact, I rarely load anything into my environment these days. 
+
+#### Avoid filepath problems.
+
+In a script based workflow, you most likely use explicit file paths to tell R where to find your raw data files or other files you need for data analysis. This isn't an issue on your local machine because you probably don't move your files around frequently. 
+
+But what about when you send it to someone else? You send them the `.R` file and the raw data file, which they save onto their computer, and then open up the `.R` file and edit the file path to match where they saved it on their machine. 
+
+That's not too much extra work, but it certainly compounds itself if you have a lot of files. 
+
+You can use development tools to manage this! When you put a file in `data-raw`, it will be in `data-raw` on anyone's machine who downloads and installs your package. You can use specific functions to tell R to look in the `data-raw` subdirectory of the package, no matter what machine the package is installed on, eliminating the need to edit the explicit file path in your script. 
+
+
+
+
+
+#### Using a Version Control System helps you track changes.
+
+Using GitHub helps you track changes to your code and data analysis. You can spend less time searching through you code looking for how it changed from the last time, because if you use RStudio's native GitHub resources then the changes are shown to you when you commit.
+
+    
+### Starting a Project
+
+If you have not set up your R ecosystem to integrate Git, R, and Markdown, read my post [Setting Up Your R Ecosystem]. This will help you set up your tools to be ready for everything described in this post.
+
+You will want to start a clean project for your data analysis. If you've already started work on the data analysis in another project, that's okay. You can bring files over to the new project if needed. I recommend using a new, clean project just to be sure that GitHub and the package development tools get off to a good start, because it can be messy to convert an existing, non-package project to a package on GitHub. 
+
+I have found the easiest way to be:
+
+#### 1. Create a New GitHub Repo
+
+When naming the repo, remember that you will be making it as a package in R. So you need to follow both Git and R's naming conventions. Git allows you to name repos with special characters such as '-', but R will not allow you to name your package that way. You could, technically, name the R package and Git repo differently, but I definitely prefer matching names just to prevent any unnecessary confusion. So, choose a name that is all characters, no '-' or other special characters, and preferably no numeric characters. For further information about package naming conventions, read [R Packages 2e Chapter 4.1.2: Name Your Package][rpackages4.1.2url]. Note that the purpose of this package is different than the kind of packages that the author is discussing in [R Packages 2e][rpackagesurl]. The package we are creating is for data analysis of a specific study or project, not to develop tools in R for others to use. You will not likely submit this package to CRAN or BioConductor, as this package will have limited usefulness for others besides you and the team working on this data analysis. So you can be a little more lax with the naming rules than would be required for you to submit to CRAN or BioConductor. 
+    
+#### 2. Create a New R Project
+
+In RStudio, click 'File' in the upper left corner and then 'New Project...'  This will open a pop up with three options: 'New Directory', 'Existing Directory', and 'Version Control'. Select 'Version Control'. In the next pop up, choose Git, and in the next pop up put in the URL to your GitHub repo. This should automatically name your new project directory whatever the repo is named. Choose where you want to directory to live on your computer and make sure the check box in the bottom left for 'Open in new session' is selected. Click 'Create Project'. These steps are covered in more depth in [Happy Git and GitHub for the UseR Chapter 15: New Project, GitHub First][HappyGitWithRChapter15URL]. 
+    
+#### 3. Create the Package
+
+Run the following line in the console:
+
+```
+devtools::create_package("path/to/project")
+```
+    
+You will get some warnings when this command is run. 
+
+\\TODO what the warnings are and what to do about them
+
+Check that your current RStudio project, active usethis project, and working directory are the same using `usethis::proj_sitrep()` and checking the output.
+
+```
+usethis::proj_sitrep()
+#> *      working_directory: 'Users/SaraBiddle/path/to/project'
+#> * active_usethis_project: 'Users/SaraBiddle/path/to/project'
+#> * active_rstudio_project: 'Users/SaraBiddle/path/to/project' 
+```
+
+If your projects and directories do not match, try running `usethis::proj_activate('path/to/project')` and re-checking with `usethis::proj_sitrep()`. 
+
+Do not mess with your working directory. Leave it as the top-level of your package. This is per the recommendation of [R Packages 2e Chapter 4.3: Working directory and file path siscipline][rpackagesch4.3url] and the reasoning behind it can be found there. 
+
+
+
+
+
+
+The R script files that contain the code you write can follow a few different different naming conventions. Just be consistent!
+
+You can put each individual function in its own `.R` file that is named `nameofthefunction.R`. Each file will be named by the individual function contained within it.
+
+You can group several related functions together. For example, if you write an S3 method, you can put the method and its helpers in the same file and name it `nameoftheS3method.r`. Or, if you have several functions that do similar things, such as several custom written plotting or graphing functions, you can put them in the same file and name it something like `plot.R`. 
+
+Each `.R` file under the `R` subdirectory should have a parallel file under the `testthat` subdirectory that contains tests for the code you wrote. 
+
+
+
+The `roxygen2` package helps greatly reduce the burden of documentation and keeps your documentation clear and consistent. 
+
+`roxygen2` helps you create these pages without extra work on your end. You don't have to write the Markdown by hand, you just have to put the appropriate `roxygen2` tags by your function.
+
+`roxygen2` can also document your data sets! A documentation block for a dataset looks something like the following:
+
+```
+#' Title of my Dataset
+#'
+#' Longer description of my dataset, including details such as how
+#' it was collected and what types of data it includes...
+#'
+#' @format ##`nameofdataset`
+#' A data frame with n rows and m columns.
+#' \describe{
+#'     \item{columnname}{Column Description}
+#'     \item{columnname}{Column Description}
+#'     ...
+#' }
+#' @source <url or other source information>
+"nameofdataset"
+```
+
+
+[HappyGitWithRChapter15URL]:https://happygitwithr.com/new-github-first
+[rpackages4.1.2url]:https://r-pkgs.org/workflow101.html#name-your-package
+[rpackagesch4.3url]:https://r-pkgs.org/workflow101.html#working-directory-and-filepath-discipline
+[rpackagesurl]:https://r-pkgs.org/
