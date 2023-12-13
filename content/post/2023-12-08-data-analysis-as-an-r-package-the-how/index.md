@@ -11,7 +11,7 @@ tags: []
 
 #### Project Goals
 
-This post is geared specifically towards creating a package that demonstrates your data analysis process and communicates the results of said data analysis. The package will include data that goes along with the analysis. The package is not intended to create robust data analysis tools for others to use.
+This post is geared specifically towards creating a package that demonstrates your data analysis process and communicates the results of this data analysis. The package will include data that goes along with the analysis. The package is not intended to create robust data analysis tools for others to use.
 
 If you are interested in creating a package that helps others conduct similar analyses to yours, this may not be the post for you.
 
@@ -23,21 +23,23 @@ If you have not set up your R ecosystem to integrate Git, R, and Markdown, read 
 
 ### Starting a Project
 
-You will want to start a clean project. If you've already started work on the data analysis in another project, that's okay. You can bring files over to the new project if needed. I recommend using a new, clean project just to be sure that GitHub and the package development tools get off to a good start, because it can be messy to convert an existing, non-package project to a package on GitHub. 
+Start a clean R project. If you've already started work on the data analysis, that's okay. You can bring files over to the new project if needed. I recommend using a new, clean project to ensure that Git and the package development tools get off to a good start. It can be messy to convert an existing, non-package project to a package on GitHub. 
 
 I have found the easiest way to be:
 
-#### 1. Create a New GitHub Repo
+#### 1. Create a New GitHub Repository
 
-When naming the repo, remember that you will be making it as a package in R. So you need to follow both Git and R's naming conventions. Git allows you to name repos with special characters such as '-', but R will not allow you to name your package that way. You could, technically, name the R package and Git repo differently, but I definitely prefer matching names just to prevent any unnecessary confusion. So, choose a name that is all characters, no '-' or other special characters, and preferably no numeric characters. For further information about package naming conventions, read [R Packages 2e Chapter 4.1.2: Name Your Package][rpackages4.1.2url]. Note that the purpose of your package is different than the kind of packages that the author is discussing in [R Packages 2e][rpackagesurl]. The package we are creating is for data analysis of a specific study or project, not to develop tools in R for others to use. You will not likely submit this package to CRAN or BioConductor, as this package will have limited usefulness for others besides you and the team working on this data analysis. So you can be a little more lax with the naming rules than would be required for you to submit to CRAN or BioConductor. 
+When naming the repo, remember that you will be making an R package. So you need to follow both Git and R's naming conventions. Git allows you to name repos with special characters such as '-', but R will not allow you to name your package that way. You could, technically, name the R package and Git repo differently, but I definitely prefer matching names just to prevent any unnecessary confusion. 
+
+Choose a name that is all characters, no '-' or other special characters, and preferably no numeric characters. For further information about package naming conventions, read [R Packages 2e Chapter 4.1.2: Name Your Package][rpackages4.1.2url]. Note that the purpose of your package is different than the kind of packages that the author is discussing in [R Packages 2e][rpackagesurl]. The package we are creating is for data analysis of a specific study or project, not to develop tools in R for others to use. You will not likely submit this package to CRAN or BioConductor, as this package will have limited usefulness for others besides you and the team working on this data analysis. So you can be a little more relaxed with the naming rules than would be required for you to submit to CRAN or BioConductor. 
     
 #### 2. Create a New R Project
 
-In RStudio, click 'File' in the upper left corner and then 'New Project...'  This will open a pop up with three options: 'New Directory', 'Existing Directory', and 'Version Control'. Select 'Version Control'. In the next pop up, choose Git, and in the next pop up put in the URL to your GitHub repo. This should automatically name your new project directory whatever the repo is named. Choose where you want to directory to live on your computer and make sure the check box in the bottom left for 'Open in new session' is selected. Click 'Create Project'. These steps are covered in more depth in [Happy Git and GitHub for the UseR Chapter 15: New Project, GitHub First][HappyGitWithRChapter15URL]. 
+In RStudio, click 'File' in the upper left corner and then 'New Project...'  This will open a pop up with three options: 'New Directory', 'Existing Directory', and 'Version Control'. Select 'Version Control'. In the next pop up, choose Git, and in the next pop up put in the URL to the newly created GitHub repo. This will automatically name the new project directory the same as the repo. Choose where you want to directory to live on your computer and make sure the check box in the bottom left for 'Open in new session' is selected. Click 'Create Project'. These steps are covered in more depth in [Happy Git and GitHub for the UseR Chapter 15: New Project, GitHub First][HappyGitWithRChapter15URL], and if you have any errors during this process that is where I would look for help.
     
 #### 3. Create the Package
 
-Run the following line in the console:
+Run the following command in the console:
 
 ```
 devtools::create_package("path/to/project")
@@ -47,7 +49,7 @@ You will get some warnings when this command is run.
 
 \\TODO what the warnings are and what to do about them
 
-Check that your current RStudio project, active usethis project, and working directory are the same using `usethis::proj_sitrep()` and checking the output.
+Check that your current RStudio project, active `usethis` project, and working directory are the same by running the command `usethis::proj_sitrep()` in the console and checking the output.
 
 ```
 usethis::proj_sitrep()
@@ -60,8 +62,36 @@ If your projects and directories do not match, try running `usethis::proj_activa
 
 **Do not mess with your working directory.** Leave it as the top-level of your package. This is per the recommendation of [R Packages 2e Chapter 4.3: Working directory and file path discipline][rpackagesch4.3url] and the reasoning behind it can be found there. 
 
+Take a look in the file window of RStudio. You will see several new files and folders there that were created when you ran `create_package()`. Perfect!
+
+#### 4. Initial Commit and Push
+
+Open up the `DESCRIPTION` file at the top level of your package. It should look similar to this:
+
+```
+Package: mypackagename
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R:
+    person("First", "Last", , "first.last@example.com", role = c("aut","cre"),
+    comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: What the package does (one paragraph).
+License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+    license
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+```
+
+Edit the 'Title' field and give your package a title. I like to use something like 'Data Analysis for xyz Project' which keeps it short and sweet. Edit the 'Description' field. This is where you can include a few more details about the project and what is included in the package. This is still relatively short, only one paragraph in length. 
 
 
+
+When formatting the 'Description' field, subsequent lines are indented four spaces. 
+
+If you know what license you want to use for this package, use the appropriate `usethis` function in the console.
+
+I like to commit and push immediately. This confirms that Git is still connected with my project and gets all the set up files staged and out of the way. 
 
 
 
