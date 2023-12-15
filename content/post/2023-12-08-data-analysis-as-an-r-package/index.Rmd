@@ -3,8 +3,8 @@ title: "Data Analysis as an R Package: The Why"
 author: 'Sara Biddle'
 date: "2023-12-08"
 slug: "dat-anls-as-pkg"
-categories: R
-tags: []
+categories: ["R"]
+tags: ["devtools" ]
 ---
 
 Large data analysis projects can quickly reach a "cliff of complexity", where you have multiple long R script files that are hard to read or comprehend what work you have done.

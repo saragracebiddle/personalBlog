@@ -3,8 +3,8 @@ title: 'Data Analysis as an R Package: The How'
 author: 'Sara Biddle'
 date: '2023-12-08'
 slug: dat-anls-as-pkg-how
-categories: []
-tags: []
+categories: ["R"]
+tags: ["devtools", "usethis"]
 ---
 
 ### Before You Begin
@@ -21,6 +21,25 @@ You will need R, RStudio, Git, GitHub, and Markdown.
 
 If you have not set up your R ecosystem to integrate Git, R, and Markdown, read my post [Setting Up Your R Ecosystem][post-r-eco]. This will help you set up your tools to be ready for everything described in this post.
 
+##### Projects and Directories
+
+There are three types of projects or directories that you will be working in. 
+
+**R Project**
+: open files and environment contents in R Studio
+
+**Active `usethis` Project**
+: directory that `usethis` and `devtools` act upon when called
+
+**Working Directory**
+: directory you are currently working in
+
+These should, generally, all be the same. 
+
+The R Project is what you see in R Studio when you open it up. The R Project will remember what you are working on. That way, if you want to work on other things, you can close the project and re-open it later and pick up right where you left off.  You can switch between projects using the dropdown in the upper right hand corner of R Studio. When you switch projects, R Studio opens the files and loads the environment as it was when you last left that project and starts a new R Session. 
+
+The working directory is what shows up in the `Files` pane of R Studio. You can navigate around the directory, but the top level working directory is `Home > projectname` in that pane. 
+
 ### Starting a Project
 
 Start a clean R project. If you've already started work on the data analysis, that's okay. You can bring files over to the new project if needed. I recommend using a new, clean project to ensure that Git and the package development tools get off to a good start. It can be messy to convert an existing, non-package project to a package on GitHub. 
@@ -32,6 +51,10 @@ I have found the easiest way to be:
 When naming the repo, remember that you will be making an R package. So you need to follow both Git and R's naming conventions. Git allows you to name repos with special characters such as '-', but R will not allow you to name your package that way. You could, technically, name the R package and Git repo differently, but I definitely prefer matching names just to prevent any unnecessary confusion. 
 
 Choose a name that is all characters, no '-' or other special characters, and preferably no numeric characters. For further information about package naming conventions, read [R Packages 2e Chapter 4.1.2: Name Your Package][rpackages4.1.2url]. Note that the purpose of your package is different than the kind of packages that the author is discussing in [R Packages 2e][rpackagesurl]. The package we are creating is for data analysis of a specific study or project, not to develop tools in R for others to use. You will not likely submit this package to CRAN or BioConductor, as this package will have limited usefulness for others besides you and the team working on this data analysis. So you can be a little more relaxed with the naming rules than would be required for you to submit to CRAN or BioConductor. 
+
+Under the option for selecting a `.gitignore` template, select the option for `R`.
+
+You can go ahead and choose a license or you can choose one later, it is up to you. If you are not sure which license to choose, you can click on the link by the license selection options to read over some popular options and what they do. I default to an MIT license, but if your study has data that should not be publicly available or used by others, then spend time choosing a good license with the protections you want. 
     
 #### 2. Create a New R Project
 
@@ -45,9 +68,26 @@ Run the following command in the console:
 devtools::create_package("path/to/project")
 ```
     
-You will get some warnings when this command is run. 
+When you run this command, you will get a lot of output in the console. It should look like this:
 
-\\TODO what the warnings are and what to do about them
+```
+devtools::create_package("path/to/project")
+#> Setting active project to 'path/to/project/projectname'
+#> Creating 'R/'
+#> Writing 'DESCRIPTION'
+#> ...
+#> Writing 'NAMESPACE'
+#> Overwrite pre-existing file 'projectname.Rproj'?
+#> 1: For sure
+#> 2: Negative
+#> 3: Nope
+```
+
+I like to let it overwrite the existing R Project. You shouldn't have anything important in the existing one since all we have done so far is project set up. This lets `devtools` set up everything the way it likes and prevents any weird issues later on. 
+
+Make your choice by typing the corresponding number into the console and pressing `enter`. 
+
+If you choose to overwrite, a new R Studio session will open up. Close the old R Studio Session. 
 
 Check that your current RStudio project, active `usethis` project, and working directory are the same by running the command `usethis::proj_sitrep()` in the console and checking the output.
 
@@ -85,15 +125,65 @@ RoxygenNote: 7.2.3
 
 Edit the 'Title' field and give your package a title. I like to use something like 'Data Analysis for xyz Project' which keeps it short and sweet. Edit the 'Description' field. This is where you can include a few more details about the project and what is included in the package. This is still relatively short, only one paragraph in length. 
 
-
-
 When formatting the 'Description' field, subsequent lines are indented four spaces. 
 
-If you know what license you want to use for this package, use the appropriate `usethis` function in the console.
+\\TODO editing the authors field
 
-I like to commit and push immediately. This confirms that Git is still connected with my project and gets all the set up files staged and out of the way. 
+Close the 'DESCRIPTION' file.
 
+If you did not choose a license option when creating the GitHub repository, choose one now.  Use the appropriate `usethis` function in the console. 
 
+If you were to choose the MIT license, you would run the following command in the console:
+
+```
+usethis::use_mit_license()
+```
+
+If you still have the 'DESCRIPTION' file open, this command will not be able to edit the license field in the file. 
+
+As you develop your package, if you use `devtools` and `usethis` appropriately, all of the other fields in the 'DESCRIPTION' will be updated and maintained properly.
+
+For a more detailed look at the purpose and use of the 'DESCRIPTION' file, read [R Packages (2e) Chapter 9.1: The DESCRIPTION FILE][rpackagesch9.1url].
+
+I like to commit and push after editing the description and choosing a license. This confirms that Git is still connected with my project and gets all the set up files staged and out of the way. 
+
+### Working in the Project
+
+#### Raw Data
+
+Run the function `usethis::use_raw_data()` in the console.
+
+This function sets up the `data-raw` directory in your package. 
+
+Move all your raw data files into the `data-raw` directory. You can create subdirectories within the `data-raw` directory if you need to organize them further. 
+
+Commit and push `data-raw` and its contents. 
+
+You can always add other files to `data-raw` later if you forgot some or are doing your analysis in parts and don't want the files you don't yet need in your directory, for whatever reason.
+
+Create a new R script file. This file will have the code used to clean your raw data files and get it into a format that is consistent and easily usable for later parts of your analysis. You should not be doing any of the analysis in this file, it is just the data cleaning!
+
+It should look something like this:
+
+```
+rawdata <- read_in('raw_data_file_name.ext') |>
+    dplyr::rename("NewName" = oldname) |>
+    dplyr::otherCleaningFunctions
+```
+
+Include comments as necessary for explanation.
+
+At the end of the script, there should be the following function:
+
+```
+usethis::use_data(nameofrawdata)
+```
+
+This saves the cleaned data frame in the file `nameofrawdata.rda` in the directory `data`. 
+
+Save this script in the `data-raw` directory. I like to name the script to match the data saved under `data`. 
+
+Repeat as necessary for all the data you want to have cleaned. 
 
 The R script files that contain the code you write can follow a few different different naming conventions. Just be consistent!
 
@@ -134,3 +224,4 @@ The `roxygen2` package helps greatly reduce the burden of documentation and keep
 [rpackagesch4.3url]:https://r-pkgs.org/workflow101.html#working-directory-and-filepath-discipline
 [rpackagesurl]:https://r-pkgs.org/
 [post-r-eco]: https://saragracebiddle-blog.netlify.app/2023-12-08-r-eco
+[rpackagesch9.1url]:https://r-pkgs.org/description.html#the-description-file

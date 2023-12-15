@@ -3,7 +3,7 @@ title: "Setting Up the R Ecosystem"
 author: ''
 date: "2023-12-08"
 slug: "r-eco"
-categories: []
+categories: ["R"]
 tags: []
 ---
 
